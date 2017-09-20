@@ -7,22 +7,22 @@ class FlutterWebView {
       const MethodChannel('plugins.apptreesoftware.com/web_view');
   bool _launched = false;
   bool get isLaunched => _launched;
-  Stream _eventStream;
 
   static const EventChannel _eventChannel =
       const EventChannel('plugins.apptreesoftware.com/web_view_events');
 
-  void launch({List<ToolbarAction> toolbarActions, double yOffset = 0.0}) {
-//    List<Map> actions = [];
-//    if (toolbarActions != null) {
-//      actions = toolbarActions.map((t) => t.toMap).toList();
-//    }
-    var args = {"yOffset": yOffset};
+  void launch({List<ToolbarAction> toolbarActions}) {
+    List<Map> actions = [];
+    if (toolbarActions != null) {
+      actions = toolbarActions.map((t) => t.toMap).toList();
+    }
+
     _launched = true;
-    _channel.invokeMethod('launch', args);
+    _channel.invokeMethod('launch', {"actions": actions});
   }
 
   void dismiss() {
+    _launched = false;
     _channel.invokeMethod('dismiss');
   }
 
@@ -40,34 +40,26 @@ class FlutterWebView {
   }
 
   Stream get eventStream {
-    if (_eventStream == null) {
-      _eventStream = _eventChannel.receiveBroadcastStream();
-    }
-    return _eventStream;
+    return _eventChannel.receiveBroadcastStream();
   }
 
   Stream<String> get onRedirect => eventStream
-      .asBroadcastStream()
       .where((map) => map["event"] == "redirect")
       .map((map) => map["url"]);
 
   Stream<int> get onToolbarAction => eventStream
-      .asBroadcastStream()
       .where((map) => map['event'] == "toolbar")
       .map((map) => map['identifier']);
 
   Stream<String> get onLoadError => eventStream
-      .asBroadcastStream()
       .where((map) => map['event'] == "webViewDidError")
       .map((map) => map['error']);
 
   Stream<String> get onWebViewDidStartLoading => eventStream
-      .asBroadcastStream()
       .where((map) => map['event'] == "webViewDidStartLoad")
       .map((map) => map['url']);
 
   Stream<String> get onWebViewDidLoad => eventStream
-      .asBroadcastStream()
       .where((map) => map['event'] == "webViewDidLoad")
       .map((map) => map['url']);
 }

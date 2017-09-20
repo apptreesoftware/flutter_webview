@@ -36,12 +36,14 @@ class _MyAppState extends State<MyApp> {
 
           ],
         ),
-        body: new Text("Redirected to $_redirectedToUrl"),
+        body: new Column(
+          children: <Widget>[
+            new Text("Redirected to $_redirectedToUrl"),
+            new MaterialButton(onPressed: launchWebViewExample, child: new Text("Launch"))
+          ],
+        ),
       ),
     );
-    if (_redirectedToUrl == null) {
-      launchWebViewExample(context);
-    }
     return app;
   }
 
@@ -53,12 +55,12 @@ class _MyAppState extends State<MyApp> {
     print("Change domain hit");
   }
 
-  void launchWebViewExample(BuildContext context) {
+  void launchWebViewExample() {
     if (flutterWebView.isLaunched) {
       return;
     }
 
-    flutterWebView.launch(yOffset: 72.0);
+    flutterWebView.launch();
     reload();
     flutterWebView.listenForRedirect("mobile://test.com", true);
     flutterWebView.onWebViewDidStartLoading.listen((url) {

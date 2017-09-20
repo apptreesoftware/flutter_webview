@@ -29,29 +29,22 @@
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([call.method isEqualToString:@"launch"]) {
-        NSDictionary *args = call.arguments;
-        NSNumber *offset = args[@"yOffset"];
-        embedded = true;
-//        NSArray *actions = call.arguments;
-//        NSMutableArray *buttons = [NSMutableArray array];
-//        if (actions) {
-//            for (NSDictionary *action in actions) {
-//                UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:[action valueForKey:@"title"]
-//                                                                           style:UIBarButtonItemStylePlain
-//                                                                          target:self
-//                                                                          action:@selector(handleToolbar:)];
-//                button.tag = [[action valueForKey:@"identifier"] intValue];
-//                [buttons addObject:button];
-//            }
-//        }
+        NSArray *actions = call.arguments[@"actions"];
+        NSMutableArray *buttons = [NSMutableArray array];
+        if (actions) {
+            for (NSDictionary *action in actions) {
+                UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:[action valueForKey:@"title"]
+                                                                           style:UIBarButtonItemStylePlain
+                                                                          target:self
+                                                                          action:@selector(handleToolbar:)];
+                button.tag = [[action valueForKey:@"identifier"] intValue];
+                [buttons addObject:button];
+            }
+        }
         self.webViewController = [[WebViewController alloc] initWithPlugin:self navItems:nil];
-        [self.hostViewController addChildViewController:self.webViewController];
-        CGRect frame = self.webViewController.view.frame;
-        frame.origin.y = offset.doubleValue;
-        [self.webViewController.view setFrame:frame];
-        [self.hostViewController.view addSubview:self.webViewController.view];
-//        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.webViewController];
-//        [self.hostViewController presentViewController:navigationController animated:true completion:nil];
+        
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.webViewController];
+        [self.hostViewController presentViewController:navigationController animated:true completion:nil];
         result(@"");
         return;
     } else if ([call.method isEqualToString:@"dismiss"]) {
@@ -62,8 +55,6 @@
         [self.hostViewController dismissViewControllerAnimated:true completion:nil];
         result(@"");
     } else if ([call.method isEqualToString:@"load"]) {
-        NSString *url = call.arguments[@"url"];
-        NSDictionary *headers = call.arguments[@"headers"];
         [self performLoad:call.arguments];
         result(@"");
         return;
