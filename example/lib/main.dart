@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    flutterWebView.launch();
+    flutterWebView.launch(toolbarActions: [new ToolbarAction("Foo", 1)]);
     reload();
     flutterWebView.listenForRedirect("mobile://test.com", true);
     flutterWebView.onWebViewDidStartLoading.listen((url) {
