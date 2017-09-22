@@ -31,15 +31,17 @@ class _MyAppState extends State<MyApp> {
         appBar: new AppBar(
           leading: leading,
           actions: [
-            new IconButton(icon: new Icon(Icons.refresh), onPressed: _refreshPage),
-            new FlatButton(onPressed: _changeDomain, child: new Text("Switch App")),
-
+            new IconButton(
+                icon: new Icon(Icons.refresh), onPressed: _refreshPage),
+            new FlatButton(
+                onPressed: _changeDomain, child: new Text("Switch App")),
           ],
         ),
         body: new Column(
           children: <Widget>[
             new Text("Redirected to $_redirectedToUrl"),
-            new MaterialButton(onPressed: launchWebViewExample, child: new Text("Launch"))
+            new MaterialButton(
+                onPressed: launchWebViewExample, child: new Text("Launch"))
           ],
         ),
       ),
@@ -60,7 +62,16 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    flutterWebView.launch();
+    flutterWebView.launch(
+        toolbarActions: [new ToolbarAction("Dismiss", 1)],
+        barColor: Colors.green,
+        tintColor: Colors.white);
+    flutterWebView.onToolbarAction.listen((identifier) {
+      switch (identifier) {
+        case 1:
+          flutterWebView.dismiss();
+      }
+    });
     reload();
     flutterWebView.listenForRedirect("mobile://test.com", true);
     flutterWebView.onWebViewDidStartLoading.listen((url) {

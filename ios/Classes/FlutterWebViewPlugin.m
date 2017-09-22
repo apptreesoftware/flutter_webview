@@ -3,7 +3,6 @@
 #import "RedirectPolicy.h"
 
 @implementation FlutterWebViewPlugin {
-    BOOL embedded;
 }
 + (void)registerWithRegistrar:(NSObject <FlutterPluginRegistrar> *)registrar {
     FlutterMethodChannel *channel = [FlutterMethodChannel
@@ -30,6 +29,11 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([call.method isEqualToString:@"launch"]) {
         NSArray *actions = call.arguments[@"actions"];
+        NSString *tint = call.arguments[@"tint"];
+        UIColor *tintColor = [self parseNavColor:tint];
+        NSString *barTint = call.arguments[@"barTint"];
+        UIColor *barTintColor = [self parseNavColor:barTint];
+        
         NSMutableArray *buttons = [NSMutableArray array];
         if (actions) {
             for (NSDictionary *action in actions) {
@@ -41,18 +45,19 @@
                 [buttons addObject:button];
             }
         }
-        self.webViewController = [[WebViewController alloc] initWithPlugin:self navItems:nil];
-        
+        self.webViewController = [[WebViewController alloc] initWithPlugin:self navItems:buttons];
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.webViewController];
         [self.hostViewController presentViewController:navigationController animated:true completion:nil];
+        if (tintColor) {
+            navigationController.navigationBar.tintColor = tintColor;
+        }
+        if (barTintColor) {
+            navigationController.navigationBar.barTintColor = barTintColor;
+        }
         result(@"");
         return;
     } else if ([call.method isEqualToString:@"dismiss"]) {
-        if (embedded) {
-            [self.webViewController.view removeFromSuperview];
-            [self.webViewController removeFromParentViewController];
-        }
-        [self.hostViewController dismissViewControllerAnimated:true completion:nil];
+        [self.webViewController dismissViewControllerAnimated:true completion:nil];
         result(@"");
     } else if ([call.method isEqualToString:@"load"]) {
         [self performLoad:call.arguments];
@@ -72,6 +77,19 @@
         result(@"");
     }
     result(FlutterMethodNotImplemented);
+}
+
+
+- (UIColor *)parseNavColor: (NSString *)colorString {
+    if (!colorString) {
+        return nil;
+    }
+    NSArray *components = [colorString componentsSeparatedByString:@","];
+    NSString *r = components[0];
+    NSString *g = components[1];
+    NSString *b = components[2];
+    
+    return [UIColor colorWithRed:[r floatValue]/255.0 green:[g floatValue]/255.0 blue:[b floatValue]/255.0 alpha:1.0];
 }
 
 - (void)performLoad:(NSDictionary *)params {

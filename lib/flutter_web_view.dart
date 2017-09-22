@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
@@ -7,18 +8,26 @@ class FlutterWebView {
       const MethodChannel('plugins.apptreesoftware.com/web_view');
   bool _launched = false;
   bool get isLaunched => _launched;
+  Stream _eventStream;
 
   static const EventChannel _eventChannel =
       const EventChannel('plugins.apptreesoftware.com/web_view_events');
 
-  void launch({List<ToolbarAction> toolbarActions}) {
+  void launch({List<ToolbarAction> toolbarActions, Color tintColor, Color barColor}) {
     List<Map> actions = [];
     if (toolbarActions != null) {
       actions = toolbarActions.map((t) => t.toMap).toList();
     }
 
     _launched = true;
-    _channel.invokeMethod('launch', {"actions": actions});
+    Map<String, dynamic> args = {"actions": actions};
+    if (tintColor != null) {
+      args["tint"] = "${tintColor.red},${tintColor.green},${tintColor.blue}";
+    }
+    if (barColor != null) {
+      args["barTint"] = "${barColor.red},${barColor.green},${barColor.blue}";
+    }
+    _channel.invokeMethod('launch', args);
   }
 
   void dismiss() {
@@ -40,7 +49,10 @@ class FlutterWebView {
   }
 
   Stream get eventStream {
-    return _eventChannel.receiveBroadcastStream();
+    if (_eventStream == null) {
+      _eventStream = _eventChannel.receiveBroadcastStream();
+    }
+    return _eventStream;
   }
 
   Stream<String> get onRedirect => eventStream
