@@ -26,7 +26,6 @@
     self.navigationItem.rightBarButtonItems = self.navItems;
     self.webView = [[UIWebView alloc] initWithFrame:self.view.frame];
     self.webView.delegate = self;
-
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [self.view addSubview:self.webView];
 }
@@ -53,13 +52,13 @@
 
     for (RedirectPolicy *policy in redirects) {
         if (policy.matchType == PREFIX && [url hasPrefix:policy.url]) {
-            [self.plugin.eventStreamHandler sendRedirectEvent:request.URL.absoluteString];
+            [self.plugin handleRedirect: request.URL.absoluteString];
             return !policy.stopOnRedirect;
         } else if (policy.matchType == SUFFIX && [url hasSuffix:policy.url]) {
-            [self.plugin.eventStreamHandler sendRedirectEvent:request.URL.absoluteString];
+            [self.plugin handleRedirect:request.URL.absoluteString];
             return !policy.stopOnRedirect;
         } else if (policy.matchType == FULL_URL && [url isEqualToString:policy.url]) {
-            [self.plugin.eventStreamHandler sendRedirectEvent:request.URL.absoluteString];
+            [self.plugin handleRedirect:request.URL.absoluteString];
             return !policy.stopOnRedirect;
         }
     }
@@ -67,15 +66,15 @@
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
-    [self.plugin.eventStreamHandler sendWebViewDidStartLoad:webView.request.URL.absoluteString];
+    [self.plugin handleWebViewDidStartLoad:webView.request.URL.absoluteString];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    [self.plugin.eventStreamHandler sendWebViewDidFinishLoad:webView.request.URL.absoluteString];
+    [self.plugin handleWebViewDidFinishLoad:webView.request.URL.absoluteString];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    [self.plugin.eventStreamHandler sendDidFailLoadWithError:error.localizedDescription];
+    [self.plugin handleWebViewLoadError:error.localizedDescription];
 }
 
 - (void)listenForRedirect:(RedirectPolicy *)redirect {

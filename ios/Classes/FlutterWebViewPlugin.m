@@ -10,18 +10,15 @@
                   binaryMessenger:[registrar messenger]];
     FlutterWebViewPlugin *instance = [[FlutterWebViewPlugin alloc]
             initWithViewController:(UIViewController *)
-                    registrar.messenger];
+                                      registrar.messenger channel: channel];
     [registrar addMethodCallDelegate:instance channel:channel];
-
-    FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.apptreesoftware.com/web_view_events" binaryMessenger:registrar.messenger];
-    [eventChannel setStreamHandler: instance.eventStreamHandler];
 }
 
-- (id)initWithViewController:(UIViewController *)viewController {
+- (id)initWithViewController:(UIViewController *)viewController channel:(FlutterMethodChannel *)channel {
     self = [super init];
     if (self) {
         self.hostViewController = viewController;
-        self.eventStreamHandler = [[EventStreamHandler alloc] init];
+        self.methodChannel = channel;
     }
     return self;
 }
@@ -33,7 +30,6 @@
         UIColor *tintColor = [self parseNavColor:tint];
         NSString *barTint = call.arguments[@"barTint"];
         UIColor *barTintColor = [self parseNavColor:barTint];
-        
         NSMutableArray *buttons = [NSMutableArray array];
         if (actions) {
             for (NSDictionary *action in actions) {
@@ -54,6 +50,7 @@
         if (barTintColor) {
             navigationController.navigationBar.barTintColor = barTintColor;
         }
+        [self performSelector:@selector(performLoad:) withObject:call.arguments afterDelay:0.4];
         result(@"");
         return;
     } else if ([call.method isEqualToString:@"dismiss"]) {
@@ -99,52 +96,24 @@
 }
 
 - (void)handleToolbar:(UIBarButtonItem *)item {
-    [self.eventStreamHandler sendToolbarEvent:item.tag];
+    [self.methodChannel invokeMethod:@"onToolbarAction" arguments:@(item.tag)];
+}
+
+- (void)handleWebViewLoadError:(NSString *)errorString {
+    [self.methodChannel invokeMethod:@"onError" arguments:errorString];
+}
+
+- (void)handleRedirect:(NSString *)url {
+    [self.methodChannel invokeMethod:@"onRedirect" arguments:url];
+}
+
+- (void)handleWebViewDidStartLoad:(NSString *)url {
+    [self.methodChannel invokeMethod:@"onLoadEvent" arguments:@{@"event" : @"webViewDidStartLoad", @"url" : url}];
+}
+
+- (void)handleWebViewDidFinishLoad:(NSString *)url {
+    [self.methodChannel invokeMethod:@"onLoadEvent" arguments:@{@"event" : @"webViewDidLoad", @"url" : url}];
 }
 
 @end
 
-@implementation EventStreamHandler {
-    FlutterEventSink _eventSink;
-}
-
-- (void)sendRedirectEvent:(NSString *)url {
-    if(_eventSink) {
-        _eventSink(@{@"event" : @"redirect", @"url" : url});
-    }
-}
-
-- (void)sendWebViewDidStartLoad:(NSString *)url {
-    if(_eventSink) {
-        _eventSink(@{@"event" : @"webViewDidStartLoad", @"url" : url});
-    }
-}
-
-- (void)sendWebViewDidFinishLoad:(NSString *)url {
-    if(_eventSink) {
-        _eventSink(@{@"event" : @"webViewDidLoad", @"url" : url});
-    }
-}
-
-- (void)sendDidFailLoadWithError:(NSString *)errorString {
-    if(_eventSink) {
-        _eventSink(@{@"event" : @"webViewDidError", @"error" : errorString});
-    }
-}
-
-- (void)sendToolbarEvent:(NSInteger)identifier {
-    _eventSink(@{@"event" : @"toolbar", @"identifier" : @(identifier)});
-}
-
-- (FlutterError *_Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {
-    _eventSink = events;
-    return nil;
-}
-
-- (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {
-    _eventSink = nil;
-    return nil;
-}
-
-
-@end

@@ -16,7 +16,6 @@
 @property (nonatomic, retain) NSArray *navItems;
 
 - (void)load:(NSString *)urlString withHeaders:(NSDictionary *)headers;
-
 - (void)listenForRedirect:(RedirectPolicy *)redirect;
 
 @end

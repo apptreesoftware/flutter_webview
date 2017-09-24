@@ -63,16 +63,28 @@ class _MyAppState extends State<MyApp> {
     }
 
     flutterWebView.launch(
-        toolbarActions: [new ToolbarAction("Dismiss", 1)],
+        "https://authenticate.apptreesoftware.com/login?redirect=mobile://test.com",
+        headers: {
+          "X-APPTREE-APPLICATION-ID": "johns.app",
+          "X-APPTREE-VERSION": "1",
+          "X-APPTREE-DEVICE-ID": "12345"
+        },
+        toolbarActions: [
+          new ToolbarAction("Dismiss", 1),
+          new ToolbarAction("Reload", 2)
+        ],
         barColor: Colors.green,
         tintColor: Colors.white);
     flutterWebView.onToolbarAction.listen((identifier) {
       switch (identifier) {
         case 1:
           flutterWebView.dismiss();
+          break;
+        case 2:
+          reload();
+          break;
       }
     });
-    reload();
     flutterWebView.listenForRedirect("mobile://test.com", true);
     flutterWebView.onWebViewDidStartLoading.listen((url) {
       setState(() => _isLoading = true);

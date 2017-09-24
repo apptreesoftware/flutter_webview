@@ -8,26 +8,39 @@ class FlutterWebView {
       const MethodChannel('plugins.apptreesoftware.com/web_view');
   bool _launched = false;
   bool get isLaunched => _launched;
-  Stream _eventStream;
 
-  static const EventChannel _eventChannel =
-      const EventChannel('plugins.apptreesoftware.com/web_view_events');
+  StreamController<String> _redirectStreamController =
+      new StreamController.broadcast();
+  StreamController<String> _errorStreamController =
+      new StreamController.broadcast();
+  StreamController<Map<String, String>> _loadEventStreamController =
+      new StreamController.broadcast();
+  StreamController<int> _toolbarActionStreamController =
+      new StreamController.broadcast();
 
-  void launch({List<ToolbarAction> toolbarActions, Color tintColor, Color barColor}) {
+  void launch(String url,
+      {Map<String, String> headers,
+      List<ToolbarAction> toolbarActions,
+      Color tintColor,
+      Color barColor}) {
+    _channel.setMethodCallHandler(_handlePlatformMessages);
+    Map<String, dynamic> params = {"url": url};
+    _launched = true;
+    if (headers != null) {
+      params["headers"] = headers;
+    }
     List<Map> actions = [];
     if (toolbarActions != null) {
       actions = toolbarActions.map((t) => t.toMap).toList();
     }
-
-    _launched = true;
-    Map<String, dynamic> args = {"actions": actions};
+    params["actions"] = actions;
     if (tintColor != null) {
-      args["tint"] = "${tintColor.red},${tintColor.green},${tintColor.blue}";
+      params["tint"] = "${tintColor.red},${tintColor.green},${tintColor.blue}";
     }
     if (barColor != null) {
-      args["barTint"] = "${barColor.red},${barColor.green},${barColor.blue}";
+      params["barTint"] = "${barColor.red},${barColor.green},${barColor.blue}";
     }
-    _channel.invokeMethod('launch', args);
+    _channel.invokeMethod('launch', params);
   }
 
   void dismiss() {
@@ -48,32 +61,41 @@ class FlutterWebView {
         'onRedirect', {"url": url, "stopOnRedirect": stopLoadOnRedirect});
   }
 
-  Stream get eventStream {
-    if (_eventStream == null) {
-      _eventStream = _eventChannel.receiveBroadcastStream();
-    }
-    return _eventStream;
-  }
+  Stream<String> get onRedirect => _redirectStreamController.stream;
 
-  Stream<String> get onRedirect => eventStream
-      .where((map) => map["event"] == "redirect")
-      .map((map) => map["url"]);
+  Stream<int> get onToolbarAction => _toolbarActionStreamController.stream;
 
-  Stream<int> get onToolbarAction => eventStream
-      .where((map) => map['event'] == "toolbar")
-      .map((map) => map['identifier']);
+  Stream<String> get onLoadError => _errorStreamController.stream;
 
-  Stream<String> get onLoadError => eventStream
-      .where((map) => map['event'] == "webViewDidError")
-      .map((map) => map['error']);
+  Stream<String> get onWebViewDidStartLoading =>
+      _loadEventStreamController.stream
+          .where((map) => map['event'] == "webViewDidStartLoad")
+          .map((map) => map['url']);
 
-  Stream<String> get onWebViewDidStartLoading => eventStream
-      .where((map) => map['event'] == "webViewDidStartLoad")
-      .map((map) => map['url']);
-
-  Stream<String> get onWebViewDidLoad => eventStream
+  Stream<String> get onWebViewDidLoad => _loadEventStreamController.stream
       .where((map) => map['event'] == "webViewDidLoad")
       .map((map) => map['url']);
+
+  //Platform method handling
+
+  Future<Null> _handlePlatformMessages(MethodCall call) async {
+    switch (call.method) {
+      case "onError":
+        _errorStreamController.add(call.arguments);
+        break;
+      case "onLoadEvent":
+        _loadEventStreamController.add(call.arguments);
+        break;
+      case "onToolbarAction":
+        _toolbarActionStreamController.add(call.arguments);
+        break;
+      case "onRedirect":
+        _redirectStreamController.add(call.arguments);
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 class ToolbarAction {
