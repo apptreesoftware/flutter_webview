@@ -79,8 +79,8 @@ class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
                 }
                 val intent = Intent(activity, WebViewActivity::class.java)
                 intent.putExtra(WebViewActivity.EXTRA_URL, url)
-                headers?.let { intent.putExtra(WebViewActivity.HEADERS, hashMapHeaders) }
-                actions?.let { intent.putExtra(WebViewActivity.ACTIONS, actionsArray) }
+                headers.let { intent.putExtra(WebViewActivity.HEADERS, hashMapHeaders) }
+                actions.let { intent.putExtra(WebViewActivity.ACTIONS, actionsArray) }
                 this.activity.startActivity(intent)
                 result.success("")
             }
