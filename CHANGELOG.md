@@ -1,3 +1,10 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 09-25-17
 
-* TODO: Describe initial release.
+* Support for full screen web view
+* Supports nav bar with actions
+* Supports listening for redirect events
+* Control javascript and media playback support
+* Supports loading new pages ( post initialization )
+* iOS & Android
+
+
