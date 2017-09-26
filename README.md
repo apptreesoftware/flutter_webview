@@ -14,3 +14,12 @@ Features
  - [ ] Android back button customization
  
 Feature requests welcome.
+
+
+### Android Support
+To use on Android, make sure to add the the following in your AndroidManifest.xml
+
+```
+<activity android:name="com.apptreesoftware.flutterwebview.WebViewActivity">
+</activity>
+```

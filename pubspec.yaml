@@ -1,8 +1,8 @@
 name: flutter_web_view
 description: A web view plugin for Flutter. Works with iOS and Android
 version: 0.0.1
-author:
-homepage:
+author: Matthew Smith
+homepage: https://github.com/apptreesoftware/flutter_webview
 
 flutter:
   plugin:
