@@ -9,9 +9,12 @@ Features
  - [x] Listen for Redirects
  - [x] Add buttons to a navigation bar
  - [x] Receive call backs for nav buttons pressed
+ - [x] Supports custom nav bar & button colors ( ios only for now )
  - [ ] Advanced nav bar support ( position , enable, disable buttons )
+ - [ ] Support for nav bar icon buttons
  - [ ] WebView history support
  - [ ] Android back button customization
+ - [ ] Built in controls for WebView navigation
  
 Feature requests welcome.
 
