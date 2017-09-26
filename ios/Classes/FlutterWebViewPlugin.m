@@ -29,6 +29,12 @@
         NSString *tint = call.arguments[@"tint"];
         UIColor *tintColor = [self parseNavColor:tint];
         NSString *barTint = call.arguments[@"barTint"];
+        NSNumber *javaScriptEnabled = call.arguments[@"javaScriptEnabled"];
+        NSNumber *mediaPlaybackEnabled = call.arguments[@"inlineMediaEnabled"];
+        BOOL mediaPlayback = false;
+        if (mediaPlaybackEnabled) {
+            mediaPlayback = [mediaPlaybackEnabled boolValue];
+        }
         UIColor *barTintColor = [self parseNavColor:barTint];
         NSMutableArray *buttons = [NSMutableArray array];
         if (actions) {
@@ -41,7 +47,7 @@
                 [buttons addObject:button];
             }
         }
-        self.webViewController = [[WebViewController alloc] initWithPlugin:self navItems:buttons];
+        self.webViewController = [[WebViewController alloc] initWithPlugin:self navItems:buttons allowMedia:mediaPlayback];
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.webViewController];
         [self.hostViewController presentViewController:navigationController animated:true completion:nil];
         if (tintColor) {

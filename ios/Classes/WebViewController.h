@@ -10,10 +10,12 @@
 
 @interface WebViewController : UIViewController<UIWebViewDelegate>
 
-- (id)initWithPlugin:(FlutterWebViewPlugin *)plugin navItems:(NSArray *)navItems;
+- (id)initWithPlugin:(FlutterWebViewPlugin *)plugin navItems:(NSArray *)navBarItems allowMedia:(BOOL)allowMedia;
+
 @property(nonatomic, weak) FlutterWebViewPlugin *plugin;
 @property(nonatomic, retain) UIWebView *webView;
 @property (nonatomic, retain) NSArray *navItems;
+@property (nonatomic, assign) BOOL allowMedia;
 
 - (void)load:(NSString *)urlString withHeaders:(NSDictionary *)headers;
 - (void)listenForRedirect:(RedirectPolicy *)redirect;

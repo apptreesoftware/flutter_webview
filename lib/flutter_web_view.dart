@@ -20,6 +20,8 @@ class FlutterWebView {
 
   void launch(String url,
       {Map<String, String> headers,
+      bool javaScriptEnabled,
+      bool inlineMediaEnabled,
       List<ToolbarAction> toolbarActions,
       Color tintColor,
       Color barColor}) {
@@ -39,6 +41,12 @@ class FlutterWebView {
     }
     if (barColor != null) {
       params["barTint"] = "${barColor.red},${barColor.green},${barColor.blue}";
+    }
+    if (javaScriptEnabled != null) {
+      params["javaScriptEnabled"] = javaScriptEnabled;
+    }
+    if (inlineMediaEnabled != null) {
+      params["inlineMediaEnabled"] = inlineMediaEnabled;
     }
     _channel.invokeMethod('launch', params);
   }

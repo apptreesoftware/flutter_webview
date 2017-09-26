@@ -11,7 +11,7 @@
 
 }
 
-- (id)initWithPlugin:(FlutterWebViewPlugin *)plugin navItems:(NSArray *)navBarItems {
+- (id)initWithPlugin:(FlutterWebViewPlugin *)plugin navItems:(NSArray *)navBarItems allowMedia:(BOOL)allowMedia {
     self = [super init];
     if (self) {
         self.plugin = plugin;
@@ -27,6 +27,7 @@
     self.webView = [[UIWebView alloc] initWithFrame:self.view.frame];
     self.webView.delegate = self;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.webView.allowsInlineMediaPlayback = YES;
     [self.view addSubview:self.webView];
 }
 

@@ -72,6 +72,8 @@ class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
                 //val barColor = call.argument<String?>("barTint")
 
                 val url = call.argument<String>("url")
+                val javaScriptEnabled = call.argument("javaScriptEnabled") ?: false
+                val inlineMediaEnabled = call.argument("inlineMediaEnabled") ?: false
                 val headers = call.argument<Map<String, String>?>("headers")
                 val hashMapHeaders = HashMap<String, String>()
                 if (headers != null) {
@@ -79,8 +81,10 @@ class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
                 }
                 val intent = Intent(activity, WebViewActivity::class.java)
                 intent.putExtra(WebViewActivity.EXTRA_URL, url)
-                headers?.let { intent.putExtra(WebViewActivity.HEADERS, hashMapHeaders) }
-                actions?.let { intent.putExtra(WebViewActivity.ACTIONS, actionsArray) }
+                intent.putExtra(WebViewActivity.HEADERS, hashMapHeaders)
+                intent.putExtra(WebViewActivity.ACTIONS, actionsArray)
+                intent.putExtra(WebViewActivity.JAVASCRIPT_ENABLED, javaScriptEnabled)
+                intent.putExtra(WebViewActivity.INLINE_MEDIA_ENABLED, inlineMediaEnabled)
                 this.activity.startActivity(intent)
                 result.success("")
             }
@@ -116,6 +120,8 @@ class WebViewActivity : Activity() {
         val ACTIONS = "actions"
         val HEADERS = "headers"
         val BAR_COLOR = "barColor"
+        val INLINE_MEDIA_ENABLED = "inlineMediaEnabled"
+        val JAVASCRIPT_ENABLED = "javaScriptEnabled"
     }
 
     lateinit var webView : WebView
@@ -125,6 +131,11 @@ class WebViewActivity : Activity() {
         webView = WebView(this)
         title = ""
         setContentView(webView)
+        webView.settings.javaScriptEnabled = intent.getBooleanExtra(JAVASCRIPT_ENABLED, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            webView.settings.mediaPlaybackRequiresUserGesture = intent.getBooleanExtra(
+                INLINE_MEDIA_ENABLED, false)
+        }
         webView.setWebViewClient(WebClient())
         webView.loadUrl(url, headers)
     }

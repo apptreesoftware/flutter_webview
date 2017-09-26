@@ -26,35 +26,24 @@ class _MyAppState extends State<MyApp> {
     if (_isLoading) {
       leading = new CircularProgressIndicator();
     }
+    var columnItems = <Widget>[
+      new MaterialButton(
+          onPressed: launchWebViewExample, child: new Text("Launch"))
+    ];
+    if (_redirectedToUrl != null) {
+      columnItems.add(new Text("Redirected to $_redirectedToUrl"));
+    }
     var app = new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
           leading: leading,
-          actions: [
-            new IconButton(
-                icon: new Icon(Icons.refresh), onPressed: _refreshPage),
-            new FlatButton(
-                onPressed: _changeDomain, child: new Text("Switch App")),
-          ],
         ),
         body: new Column(
-          children: <Widget>[
-            new Text("Redirected to $_redirectedToUrl"),
-            new MaterialButton(
-                onPressed: launchWebViewExample, child: new Text("Launch"))
-          ],
+          children: columnItems,
         ),
       ),
     );
     return app;
-  }
-
-  void _refreshPage() {
-    reload();
-  }
-
-  void _changeDomain() {
-    print("Change domain hit");
   }
 
   void launchWebViewExample() {
@@ -63,12 +52,11 @@ class _MyAppState extends State<MyApp> {
     }
 
     flutterWebView.launch(
-        "https://authenticate.apptreesoftware.com/login?redirect=mobile://test.com",
+        "https://apptreesoftware.com",
         headers: {
-          "X-APPTREE-APPLICATION-ID": "johns.app",
-          "X-APPTREE-VERSION": "1",
-          "X-APPTREE-DEVICE-ID": "12345"
+          "X-SOME-HEADER": "MyCustomHeader",
         },
+        javaScriptEnabled: false,
         toolbarActions: [
           new ToolbarAction("Dismiss", 1),
           new ToolbarAction("Reload", 2)
@@ -100,11 +88,10 @@ class _MyAppState extends State<MyApp> {
 
   void reload() {
     flutterWebView.load(
-        "https://authenticate.apptreesoftware.com/login?redirect=mobile://test.com",
+        "https://google.com",
         headers: {
-          "X-APPTREE-APPLICATION-ID": "johns.app",
-          "X-APPTREE-VERSION": "1",
-          "X-APPTREE-DEVICE-ID": "12345"
-        });
+        "X-SOME-HEADER": "MyCustomHeader",
+        },
+    );
   }
 }
