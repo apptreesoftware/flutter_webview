@@ -51,8 +51,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    flutterWebView.launch(
-        "https://apptreesoftware.com",
+    flutterWebView.launch("https://apptreesoftware.com",
         headers: {
           "X-SOME-HEADER": "MyCustomHeader",
         },
@@ -74,6 +73,7 @@ class _MyAppState extends State<MyApp> {
       }
     });
     flutterWebView.listenForRedirect("mobile://test.com", true);
+
     flutterWebView.onWebViewDidStartLoading.listen((url) {
       setState(() => _isLoading = true);
     });
@@ -88,10 +88,10 @@ class _MyAppState extends State<MyApp> {
 
   void reload() {
     flutterWebView.load(
-        "https://google.com",
-        headers: {
+      "https://google.com",
+      headers: {
         "X-SOME-HEADER": "MyCustomHeader",
-        },
+      },
     );
   }
 }
