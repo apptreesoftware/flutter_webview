@@ -168,6 +168,14 @@ class WebViewActivity : Activity() {
         FlutterWebViewPlugin.onToolbarAction(item.itemId)
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            super.onBackPressed()
+        }
+    }
 }
 
 class WebClient : WebViewClient() {
