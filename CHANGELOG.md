@@ -7,4 +7,8 @@
 * Supports loading new pages ( post initialization )
 * iOS & Android
 
+## [0.0.2] - 11-07-17
+
+* Android back button support - https://github.com/apptreesoftware/flutter_webview/pull/5
+
 
