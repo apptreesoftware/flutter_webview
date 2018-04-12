@@ -13,7 +13,7 @@ class FlutterWebView {
       new StreamController.broadcast();
   StreamController<String> _errorStreamController =
       new StreamController.broadcast();
-  StreamController<Map<String, String>> _loadEventStreamController =
+  StreamController<Map<dynamic, dynamic>> _loadEventStreamController =
       new StreamController.broadcast();
   StreamController<int> _toolbarActionStreamController =
       new StreamController.broadcast();
