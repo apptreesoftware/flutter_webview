@@ -4,6 +4,9 @@ version: 0.0.2
 author: Matthew Smith <matthew@apptree.cloud>
 homepage: https://github.com/apptreesoftware/flutter_webview
 
+environment:
+  sdk: "<=3.0.0"
+
 flutter:
   plugin:
     androidPackage: com.apptreesoftware.flutterwebview
