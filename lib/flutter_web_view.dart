@@ -18,13 +18,16 @@ class FlutterWebView {
   StreamController<int> _toolbarActionStreamController =
       new StreamController.broadcast();
 
-  void launch(String url,
-      {Map<String, String> headers,
-      bool javaScriptEnabled,
-      bool inlineMediaEnabled,
-      List<ToolbarAction> toolbarActions,
-      Color tintColor,
-      Color barColor}) {
+  void launch(
+    String url, {
+    Map<String, String> headers,
+    bool javaScriptEnabled,
+    bool inlineMediaEnabled,
+    List<ToolbarAction> toolbarActions,
+    Color tintColor,
+    Color barColor,
+    bool clearCookies = false,
+  }) {
     _channel.setMethodCallHandler(_handlePlatformMessages);
     Map<String, dynamic> params = {"url": url};
     _launched = true;
@@ -47,6 +50,9 @@ class FlutterWebView {
     }
     if (inlineMediaEnabled != null) {
       params["inlineMediaEnabled"] = inlineMediaEnabled;
+    }
+    if (clearCookies) {
+      params["clearCookies"] = clearCookies;
     }
     _channel.invokeMethod('launch', params);
   }

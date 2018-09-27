@@ -31,9 +31,13 @@
         NSString *barTint = call.arguments[@"barTint"];
         NSNumber *javaScriptEnabled = call.arguments[@"javaScriptEnabled"];
         NSNumber *mediaPlaybackEnabled = call.arguments[@"inlineMediaEnabled"];
+        NSNumber *clearCookies = call.arguments[@"clearCookies"];
         BOOL mediaPlayback = false;
         if (mediaPlaybackEnabled) {
             mediaPlayback = [mediaPlaybackEnabled boolValue];
+        }
+        if (clearCookies.boolValue) {
+         [[NSURLSession sharedSession] resetWithCompletionHandler:^{}];
         }
         UIColor *barTintColor = [self parseNavColor:barTint];
         NSMutableArray *buttons = [NSMutableArray array];
