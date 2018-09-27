@@ -16,7 +16,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
 
-class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
+class FlutterWebViewPlugin(val activity: Activity) : MethodCallHandler {
     companion object {
 
         lateinit var channel: MethodChannel
@@ -26,9 +26,8 @@ class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
 
         @JvmStatic
         fun registerWith(registrar: Registrar): Unit {
-            channel = MethodChannel(registrar.messenger(),
-                                    "plugins.apptreesoftware.com/web_view")
-            val plugin = FlutterWebViewPlugin(registrar.activity() as FlutterActivity)
+            channel = MethodChannel(registrar.messenger(), "plugins.apptreesoftware.com/web_view")
+            val plugin = FlutterWebViewPlugin(registrar.activity())
             channel.setMethodCallHandler(plugin)
             redirects.clear()
         }
