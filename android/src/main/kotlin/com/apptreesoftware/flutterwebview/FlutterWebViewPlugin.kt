@@ -7,10 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -74,6 +71,7 @@ class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
                 val url = call.argument<String>("url")
                 val javaScriptEnabled = call.argument("javaScriptEnabled") ?: false
                 val inlineMediaEnabled = call.argument("inlineMediaEnabled") ?: false
+                val clearCookies = call.argument("clearCookies") ?: false
                 val headers = call.argument<Map<String, String>?>("headers")
                 val hashMapHeaders = HashMap<String, String>()
                 if (headers != null) {
@@ -85,6 +83,7 @@ class FlutterWebViewPlugin(val activity: FlutterActivity) : MethodCallHandler {
                 intent.putExtra(WebViewActivity.ACTIONS, actionsArray)
                 intent.putExtra(WebViewActivity.JAVASCRIPT_ENABLED, javaScriptEnabled)
                 intent.putExtra(WebViewActivity.INLINE_MEDIA_ENABLED, inlineMediaEnabled)
+                intent.putExtra(WebViewActivity.CLEAR_COOKIES, clearCookies)
                 this.activity.startActivity(intent)
                 result.success("")
             }
@@ -122,6 +121,7 @@ class WebViewActivity : Activity() {
         val BAR_COLOR = "barColor"
         val INLINE_MEDIA_ENABLED = "inlineMediaEnabled"
         val JAVASCRIPT_ENABLED = "javaScriptEnabled"
+        val CLEAR_COOKIES = "clearCookies"
     }
 
     lateinit var webView : WebView
@@ -136,7 +136,10 @@ class WebViewActivity : Activity() {
             webView.settings.mediaPlaybackRequiresUserGesture = intent.getBooleanExtra(
                 INLINE_MEDIA_ENABLED, false)
         }
-        webView.setWebViewClient(WebClient())
+        webView.webViewClient = WebClient()
+        if (clearCookies) {
+            clearCookies()
+        }
         webView.loadUrl(url, headers)
     }
 
@@ -151,11 +154,20 @@ class WebViewActivity : Activity() {
         webView.loadUrl(url, headers)
     }
 
+    private fun clearCookies() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().removeAllCookies { }
+        } else {
+            CookieManager.getInstance().removeAllCookie()
+        }
+    }
+
     val url: String get() = intent.extras.getString(WebViewActivity.EXTRA_URL)
     val headers: HashMap<String, String>
         get() = intent.getSerializableExtra(WebViewActivity.HEADERS) as HashMap<String, String>
     val actions: ArrayList<Map<String, Any>>
         get() = intent.getSerializableExtra(WebViewActivity.ACTIONS) as ArrayList<Map<String, Any>>
+    val clearCookies : Boolean get() = intent.getBooleanExtra(WebViewActivity.CLEAR_COOKIES, false)
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         for ((index, action) in actions.withIndex()) {
