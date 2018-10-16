@@ -67,7 +67,7 @@ class FlutterWebViewPlugin(val activity: Activity) : MethodCallHandler {
                 //val tintColor = call.argument<String?>("tint")
                 //val barColor = call.argument<String?>("barTint")
 
-                val url = call.argument<String>("url")
+                val url = call.argument<String>("url") ?: ""
                 val javaScriptEnabled = call.argument("javaScriptEnabled") ?: false
                 val inlineMediaEnabled = call.argument("inlineMediaEnabled") ?: false
                 val clearCookies = call.argument("clearCookies") ?: false
@@ -87,8 +87,8 @@ class FlutterWebViewPlugin(val activity: Activity) : MethodCallHandler {
                 result.success("")
             }
             "onRedirect" -> {
-                val url = call.argument<String>("url")
-                val stopOnRedirect = call.argument<Boolean>("stopOnRedirect")
+                val url = call.argument<String>("url") ?: ""
+                val stopOnRedirect = call.argument<Boolean>("stopOnRedirect") ?: false
                 val policy = RedirectPolicy(url, stopOnRedirect, MatchType.PREFIX)
                 redirects.add(policy)
                 result.success("")
@@ -98,7 +98,7 @@ class FlutterWebViewPlugin(val activity: Activity) : MethodCallHandler {
                 currentActivity = null
             }
             "load" -> {
-                val url = call.argument<String>("url")
+                val url = call.argument<String>("url") ?: ""
                 val headers = call.argument<Map<String, String>?>("headers")
                 val hashMapHeaders = HashMap<String, String>()
                 if (headers != null) {
