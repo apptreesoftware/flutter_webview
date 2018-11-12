@@ -1,6 +1,6 @@
 name: flutter_web_view
 description: A native WebView plugin for Flutter with Nav Bar support. Works with iOS and Android
-version: 0.0.3
+version: 0.0.4
 author: Matthew Smith <matthew@apptree.cloud>
 homepage: https://github.com/apptreesoftware/flutter_webview
 

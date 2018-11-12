@@ -11,4 +11,6 @@
 
 * Android back button support - https://github.com/apptreesoftware/flutter_webview/pull/5
 
+## [0.0.4] - 11-12-18
 
+* Fix build errors after gradle update
