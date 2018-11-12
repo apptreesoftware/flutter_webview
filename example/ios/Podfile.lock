@@ -5,18 +5,18 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `/Users/matthew/flutter/bin/cache/artifacts/engine/ios`)
-  - flutter_web_view (from `/Users/matthew/Projects/AppTree/Web/flutter_web_view/ios`)
+  - flutter_web_view (from `/Users/matthew/Projects/AppTree/plugins/flutter_web_view/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: /Users/matthew/flutter/bin/cache/artifacts/engine/ios
+    :path: "/Users/matthew/flutter/bin/cache/artifacts/engine/ios"
   flutter_web_view:
-    :path: /Users/matthew/Projects/AppTree/Web/flutter_web_view/ios
+    :path: "/Users/matthew/Projects/AppTree/plugins/flutter_web_view/ios"
 
 SPEC CHECKSUMS:
-  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
-  flutter_web_view: 95e784768166c40b99e0801adff6ccc798bde237
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  flutter_web_view: 6172ec2a6b4c7a33d840300a74354b913416782e
 
 PODFILE CHECKSUM: 351e02e34b831289961ec3558a535cbd2c4965d2
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.5.2

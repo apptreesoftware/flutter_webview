@@ -87,8 +87,8 @@ class FlutterWebViewPlugin(val activity: Activity) : MethodCallHandler {
                 result.success("")
             }
             "onRedirect" -> {
-                val url = call.argument<String>("url")
-                val stopOnRedirect = call.argument<Boolean>("stopOnRedirect")
+                val url = call.argument<String>("url") ?: throw RuntimeException("url must be provided")
+                val stopOnRedirect = call.argument<Boolean>("stopOnRedirect") ?: true
                 val policy = RedirectPolicy(url, stopOnRedirect, MatchType.PREFIX)
                 redirects.add(policy)
                 result.success("")
@@ -98,7 +98,7 @@ class FlutterWebViewPlugin(val activity: Activity) : MethodCallHandler {
                 currentActivity = null
             }
             "load" -> {
-                val url = call.argument<String>("url")
+                val url = call.argument<String>("url") ?: throw RuntimeException("url must be provided")
                 val headers = call.argument<Map<String, String>?>("headers")
                 val hashMapHeaders = HashMap<String, String>()
                 if (headers != null) {
