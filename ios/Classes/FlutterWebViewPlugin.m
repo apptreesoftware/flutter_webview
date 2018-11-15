@@ -8,9 +8,9 @@
     FlutterMethodChannel *channel = [FlutterMethodChannel
             methodChannelWithName:@"plugins.apptreesoftware.com/web_view"
                   binaryMessenger:[registrar messenger]];
+    UIViewController *viewController = [UIApplication sharedApplication].delegate.window.rootViewController;
     FlutterWebViewPlugin *instance = [[FlutterWebViewPlugin alloc]
-            initWithViewController:(UIViewController *)
-                                      registrar.messenger channel: channel];
+            initWithViewController:viewController channel: channel];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
