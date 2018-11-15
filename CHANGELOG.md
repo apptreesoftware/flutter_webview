@@ -14,3 +14,7 @@
 ## [0.0.4] - 11-12-18
 
 * Fix build errors after gradle update
+
+## [0.0.5] - 11-12-18
+
+* Fix crash after upgrading to Flutter 0.11.3
