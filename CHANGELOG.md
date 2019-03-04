@@ -18,3 +18,7 @@
 ## [0.0.5] - 11-12-18
 
 * Fix crash after upgrading to Flutter 0.11.3
+
+## [0.0.6] - 03-04-19
+
+* Upgrade kotlin plugin version for compatibility with latest gradle
